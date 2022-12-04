@@ -27,7 +27,7 @@ function getNeighbors(row, col) {
         for (let j = -1; j <= 1; j++) {
             let r = row + i
             let c = col + j
-            if(r >= 0 && r < rows && c >= 0 && c < columns && (r != row || c != col)) {
+            if (r >= 0 && r < rows && c >= 0 && c < columns && (r != row || c != col)) {
                 neighbors.push([r, c])
             }
         }
@@ -39,7 +39,7 @@ function setMines(row, col) {
     notValidMineLocation = getNeighbors(row, col)
     notValidMineLocation.push([row, col])
     mines = 0
-    while(mines < mineCount) {
+    while (mines < mineCount) {
         randRow = Math.floor(Math.random() * rows);
         randCol = Math.floor(Math.random() * columns);
         let coords = JSON.stringify([randRow, randCol])
@@ -48,27 +48,73 @@ function setMines(row, col) {
         if (coordsFound == -1) {
             notValidMineLocation.push([randRow, randCol])
             mineSquares.push([randRow, randCol])
-            let $cell = $(`.col.unclicked[row-num=${randRow}][col-num=${randCol}]`)
+            let $cell = $(`.col[row-num=${randRow}][col-num=${randCol}]`)
             $cell.addClass('mine')
+            revealedBoard[randRow][randCol] = "bomb"
             mines++
         }
     }
 }
 
+function setRevealedBoard() {
+    for (let i = 0; i < rows; i++) {
+        for (let j = 0; j < columns; j++) {
+            if (revealedBoard[i][j] == "undef") {
+                let neighbors = getNeighbors(i, j)
+                let nearbyMines = 0
+                neighbors.forEach((neighbor) => {
+                    if (revealedBoard[neighbor[0]][neighbor[1]] == "bomb") {
+                        nearbyMines += 1
+                    }
+                })
+                revealedBoard[i][j] = nearbyMines === 0 ? '' : nearbyMines;
+            }
+        }
+    }
+}
+
 function initializeBoard(row, col) {
+    for (let i = 0; i < rows; i++) {
+        r = []
+        for (let j = 0; j < columns; j++) {
+            r.push("undef")
+        }
+        revealedBoard.push(r)
+    }
     setMines(row, col)
-    console.log(mineSquares)
-    
+    // console.log(mineSquares)
+    console.log(revealedBoard)
+    setRevealedBoard()
+    console.log(revealedBoard)
+}
+
+function revealTile(row, col) {
+    let $cell = $(`.col[row-num=${row}][col-num=${col}]`)
+    $cell.removeClass('unclicked')
+    $cell.addClass('clicked')
+    let square = revealedBoard[row][col]
+    if (square != "bomb") {
+        $cell.text(square)
+    }
+    else {
+        icon = 'fa fa-bomb';
+        $cell.append(
+            $('<i>').addClass(icon)
+        );
+    }
+    console.log(square)
+    if(square != '' && square != "bomb") {
+        $cell.addClass("num" + square)
+    }
 }
 
 $board.on('click', '.col.unclicked', function () {
     let $cell = $(this)
-    $cell.removeClass('unclicked')
-    $cell.addClass('clicked')
-    if(initialClick) {
-        initializeBoard(+$cell.attr('row-num'),+$cell.attr('col-num'))
+    if (initialClick) {
+        initializeBoard(+$cell.attr('row-num'), +$cell.attr('col-num'))
         initialClick = false;
     }
+    revealTile(+$cell.attr('row-num'), +$cell.attr('col-num'))
 })
 
 window.onload = function () {

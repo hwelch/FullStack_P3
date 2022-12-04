@@ -15,6 +15,7 @@ body {
     display: inline-block;
     border-right: 1px solid white;
     border-bottom: 1px solid white;
+    vertical-align: top;
   }
 
   .row {
@@ -27,6 +28,8 @@ body {
 
   .col.clicked {
     background-color: darkgray;
+    font-size: 30px;
+    line-height: 50px;
   }
 
   .col.unclicked:hover {
@@ -40,7 +43,6 @@ body {
   .row .col:last-child {
     border-right: none;
   }
-  
 
   .mine {
     background-color: red;
