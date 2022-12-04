@@ -25,6 +25,10 @@ body {
     cursor: pointer;
   }
 
+  .col.clicked {
+    background-color: darkgray;
+  }
+
   .col.unclicked:hover {
     background-color: white;
   }
@@ -35,4 +39,41 @@ body {
 
   .row .col:last-child {
     border-right: none;
+  }
+  
+
+  .mine {
+    background-color: red;
+  }
+
+  .num1 {
+    color: blue;
+  }
+  
+  .num2 {
+    color: green;
+  }
+
+  .num3 {
+    color: red;
+  }
+
+  .num4 {
+    color: purple;
+  }
+
+  .num5 {
+    color: maroon;
+  }
+
+  .num6 {
+    color: turquoise;
+  }
+
+  .num7 {
+    color: black;
+  }
+  
+  .num8 {
+    color: gray;
   }
