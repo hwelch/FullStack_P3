@@ -156,11 +156,14 @@ $board.on('click', '.col.unclicked', function () {
             if ($cell.text() == '') {
                 $cell.css("font-size", 30)
                 $cell.text('🚩')
-                
+                mineCount--
+                console.log(mineCount)
             }
             else {
                 $cell.text('')
+                mineCount++
             }
+            $('#mines-count').text(mineCount)
         }
         else {
             pressTile(+$cell.attr('row-num'), +$cell.attr('col-num'))
@@ -173,7 +176,8 @@ window.onload = function () {
 }
 
 function startGame() {
-    document.getElementById("mines-count").innerText = mineCount;
+    // document.getElementById("mines-count").innerText = mineCount;
+    $('#mines-count').text(mineCount)
     newBoard(rows, columns);
 }
 
