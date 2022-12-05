@@ -5,6 +5,7 @@ var columns = 9
 var mineCount = 10
 var mineSquares = []
 var initialClick = true
+var revealedTiles = []
 
 function newBoard(row, col) {
     $board.empty();
@@ -82,29 +83,43 @@ function initializeBoard(row, col) {
         revealedBoard.push(r)
     }
     setMines(row, col)
-    // console.log(mineSquares)
-    console.log(revealedBoard)
     setRevealedBoard()
-    console.log(revealedBoard)
 }
 
 function revealTile(row, col) {
     let $cell = $(`.col[row-num=${row}][col-num=${col}]`)
-    $cell.removeClass('unclicked')
-    $cell.addClass('clicked')
-    let square = revealedBoard[row][col]
-    if (square != "bomb") {
-        $cell.text(square)
+    if ($cell.hasClass('unclicked')) {
+        $cell.removeClass('unclicked')
+        $cell.addClass('clicked')
+        let square = revealedBoard[row][col]
+        if (square != "bomb") {
+            $cell.text(square)
+        }
+        else {
+            icon = 'fa fa-bomb';
+            $cell.append(
+                $('<i>').addClass(icon)
+            );
+        }
+        if(square != '' && square != "bomb") {
+            $cell.addClass("num" + square)
+        }
     }
-    else {
-        icon = 'fa fa-bomb';
-        $cell.append(
-            $('<i>').addClass(icon)
-        );
-    }
-    console.log(square)
-    if(square != '' && square != "bomb") {
-        $cell.addClass("num" + square)
+}
+
+function pressTile(row, col) {
+    revealTile(row, col)
+    if(revealedBoard[row][col] == '') {
+        let neighbors = getNeighbors(row, col)
+        neighbors.forEach((neighbor) => {
+            let allCoords = JSON.stringify(revealedTiles)
+            let coords = JSON.stringify(`${neighbor[0]} ${neighbor[1]}`)
+            let coordsFound = allCoords.indexOf(coords)
+            if(coordsFound == -1) {
+                revealedTiles.push(`${neighbor[0]} ${neighbor[1]}`)
+                return pressTile(neighbor[0], neighbor[1])
+            }
+        })
     }
 }
 
@@ -114,7 +129,7 @@ $board.on('click', '.col.unclicked', function () {
         initializeBoard(+$cell.attr('row-num'), +$cell.attr('col-num'))
         initialClick = false;
     }
-    revealTile(+$cell.attr('row-num'), +$cell.attr('col-num'))
+    pressTile(+$cell.attr('row-num'), +$cell.attr('col-num'))
 })
 
 window.onload = function () {
