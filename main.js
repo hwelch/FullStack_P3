@@ -3,9 +3,11 @@ var revealedBoard = []
 var rows = 9
 var columns = 9
 var mineCount = 10
+var initialMineCount = 10
 var mineSquares = []
 var initialClick = true
 var revealedTiles = []
+var gameOver = false
 
 function newBoard(row, col) {
     $board.empty();
@@ -93,6 +95,11 @@ function revealTile(row, col) {
         $cell.addClass('clicked')
         let square = revealedBoard[row][col]
         if (square != "bomb") {
+            revealedTiles.push(`${row} ${col}`)
+            if (revealedTiles.length == rows * columns - initialMineCount) {
+                gameOver = !gameOver
+                alert("YOU WIN!")
+            }
             $cell.text(square)
         }
         else {
@@ -100,26 +107,42 @@ function revealTile(row, col) {
             $cell.append(
                 $('<i>').addClass(icon)
             );
+            if (!gameOver) {
+                gameOver = !gameOver
+                revealMines()
+                alert("YOU LOSE!")
+                $cell.css("background-color", "red")
+            }
         }
-        if(square != '' && square != "bomb") {
+        if (square != '' && square != "bomb") {
             $cell.addClass("num" + square)
         }
     }
 }
 
 function pressTile(row, col) {
+    console.log(revealedTiles.length)
     revealTile(row, col)
-    if(revealedBoard[row][col] == '') {
+    if (revealedBoard[row][col] == '') {
         let neighbors = getNeighbors(row, col)
         neighbors.forEach((neighbor) => {
             let allCoords = JSON.stringify(revealedTiles)
             let coords = JSON.stringify(`${neighbor[0]} ${neighbor[1]}`)
             let coordsFound = allCoords.indexOf(coords)
-            if(coordsFound == -1) {
-                revealedTiles.push(`${neighbor[0]} ${neighbor[1]}`)
+            if (coordsFound == -1) {
+                // revealedTiles.push(`${neighbor[0]} ${neighbor[1]}`)
                 return pressTile(neighbor[0], neighbor[1])
             }
         })
+    }
+}
+
+function revealMines() {
+    for (let i = 0; i < rows; i++) {
+        for (let j = 0; j < columns; j++) {
+            if (revealedBoard[i][j] == "bomb")
+                revealTile(i, j);
+        }
     }
 }
 
