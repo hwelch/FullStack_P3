@@ -1,5 +1,4 @@
 var $board = $('#board');
-var $reset = $('#reset-btn')
 var revealedBoard = []
 var rows = 9
 var columns = 9
@@ -9,6 +8,7 @@ var mineSquares = []
 var initialClick = true
 var revealedTiles = []
 var gameOver = false
+var flagSet = false
 
 function newBoard(row, col) {
     $board.empty();
@@ -151,8 +151,21 @@ $board.on('click', '.col.unclicked', function () {
         initializeBoard(+$cell.attr('row-num'), +$cell.attr('col-num'))
         initialClick = false;
     }
-    if(!gameOver)
-        pressTile(+$cell.attr('row-num'), +$cell.attr('col-num'))
+    if(!gameOver) {
+        if (flagSet) {
+            if ($cell.text() == '') {
+                $cell.css("font-size", 30)
+                $cell.text('🚩')
+                
+            }
+            else {
+                $cell.text('')
+            }
+        }
+        else {
+            pressTile(+$cell.attr('row-num'), +$cell.attr('col-num'))
+        }
+    }
 })
 
 window.onload = function () {
@@ -172,4 +185,15 @@ $('#reset-btn').click( function () {
     revealedTiles = []
     gameOver = false
     startGame()
+})
+
+$('#flag-btn').click( function () {
+    let $cell = $(this)
+    if(flagSet) {
+        $cell.css("background-color", "lightgray")
+    }
+    else {
+        $cell.css("background-color", "darkgray")
+    }
+    flagSet = !flagSet
 })
