@@ -1,4 +1,5 @@
 var $board = $('#board');
+var $reset = $('#reset-btn')
 var revealedBoard = []
 var rows = 9
 var columns = 9
@@ -121,7 +122,6 @@ function revealTile(row, col) {
 }
 
 function pressTile(row, col) {
-    console.log(revealedTiles.length)
     revealTile(row, col)
     if (revealedBoard[row][col] == '') {
         let neighbors = getNeighbors(row, col)
@@ -130,7 +130,6 @@ function pressTile(row, col) {
             let coords = JSON.stringify(`${neighbor[0]} ${neighbor[1]}`)
             let coordsFound = allCoords.indexOf(coords)
             if (coordsFound == -1) {
-                // revealedTiles.push(`${neighbor[0]} ${neighbor[1]}`)
                 return pressTile(neighbor[0], neighbor[1])
             }
         })
@@ -152,7 +151,8 @@ $board.on('click', '.col.unclicked', function () {
         initializeBoard(+$cell.attr('row-num'), +$cell.attr('col-num'))
         initialClick = false;
     }
-    pressTile(+$cell.attr('row-num'), +$cell.attr('col-num'))
+    if(!gameOver)
+        pressTile(+$cell.attr('row-num'), +$cell.attr('col-num'))
 })
 
 window.onload = function () {
@@ -163,3 +163,13 @@ function startGame() {
     document.getElementById("mines-count").innerText = mineCount;
     newBoard(rows, columns);
 }
+
+$('#reset-btn').click( function () {
+    revealedBoard = []
+    mineCount = 10
+    mineSquares = []
+    initialClick = true
+    revealedTiles = []
+    gameOver = false
+    startGame()
+})

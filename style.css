@@ -79,3 +79,24 @@ body {
   .num8 {
     color: gray;
   }
+
+  #flag-btn {
+    font-size: 25px;
+    width: 100px;
+    height: 40px;
+    background-color: lightgray;
+    border:none;
+    margin-top:10px;
+    cursor: pointer;
+  }
+
+  #reset-btn {
+    font-size: 20px;
+    width: 100px;
+    height: 40px;
+    background-color: lightcoral;
+    color:white;
+    border:none;
+    margin-top:10px;
+    cursor: pointer;
+  }
