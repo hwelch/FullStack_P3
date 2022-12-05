@@ -52,8 +52,6 @@ function setMines(row, col) {
         if (coordsFound == -1) {
             notValidMineLocation.push([randRow, randCol])
             mineSquares.push([randRow, randCol])
-            let $cell = $(`.col[row-num=${randRow}][col-num=${randCol}]`)
-            $cell.addClass('mine')
             revealedBoard[randRow][randCol] = "bomb"
             mines++
         }
@@ -99,6 +97,7 @@ function revealTile(row, col) {
             revealedTiles.push(`${row} ${col}`)
             if (revealedTiles.length == rows * columns - initialMineCount) {
                 gameOver = !gameOver
+                flagMines()
                 alert("YOU WIN!")
             }
             $cell.text(square)
@@ -145,6 +144,22 @@ function revealMines() {
     }
 }
 
+function flagMines() {
+    for (let i = 0; i < rows; i++) {
+        for (let j = 0; j < columns; j++) {
+            if (revealedBoard[i][j] == "bomb") {
+                let $cell = $(`.col[row-num=${i}][col-num=${j}]`)
+                if ($cell.text() == '') {
+                    $cell.css("font-size", 30)
+                    $cell.text('🚩')
+                    mineCount--
+                    $('#mines-count').text(mineCount)
+                }
+            }
+        }
+    }
+}
+
 $board.on('click', '.col.unclicked', function () {
     let $cell = $(this)
     if (initialClick) {
@@ -157,7 +172,6 @@ $board.on('click', '.col.unclicked', function () {
                 $cell.css("font-size", 30)
                 $cell.text('🚩')
                 mineCount--
-                console.log(mineCount)
             }
             else {
                 $cell.text('')
@@ -166,7 +180,8 @@ $board.on('click', '.col.unclicked', function () {
             $('#mines-count').text(mineCount)
         }
         else {
-            pressTile(+$cell.attr('row-num'), +$cell.attr('col-num'))
+            if($cell.text() != '🚩')
+                pressTile(+$cell.attr('row-num'), +$cell.attr('col-num'))
         }
     }
 })
@@ -176,7 +191,6 @@ window.onload = function () {
 }
 
 function startGame() {
-    // document.getElementById("mines-count").innerText = mineCount;
     $('#mines-count').text(mineCount)
     newBoard(rows, columns);
 }
